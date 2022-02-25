@@ -1,6 +1,6 @@
 {
-    "name": "Demo7",
-    "description": "test",
+    "name": "Demo",
+    "description": "Demo project",
     "version": "0.0.1",
     "dependencies": {},
     "node-red": {

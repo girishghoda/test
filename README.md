@@ -1,7 +1,7 @@
-Demo7
-=====
+Demo
+====
 
-test
+Demo project
 
 ### About
 
