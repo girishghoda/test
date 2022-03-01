@@ -1,1 +1,18 @@
-[]
+[
+  {
+    "id": "51a45341.97a21c",
+    "type": "function",
+    "z": "78ffba98.f127d4",
+    "name": "",
+    "func": "var require = context.global.get('require'); \n\nreturn msg;",
+    "outputs": 1,
+    "timeout": 10000,
+    "newThread": false,
+    "noerr": 0,
+    "x": 467.5,
+    "y": 340.796875,
+    "wires": [
+        []
+    ]
+  }
+]
