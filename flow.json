@@ -1,20 +1,18 @@
 [
-    {
-        "id": "4f6d83e.3ff377c",
-        "type": "tab",
-        "label": "Flow 1",
-        "disabled": false,
-        "info": ""
-    },
-    {
-        "id": "70ee5480.c161fc",
-        "type": "Create-Order",
-        "z": "4f6d83e.3ff377c",
-        "apiKey": "shippo_test_aaa42e49608b6267082d23231042d31d6066aee6",
-        "x": 274.5,
-        "y": 310.796875,
-        "wires": [
-            []
-        ]
-    }
+  {
+    "id": "51a45341.97a21c",
+    "type": "function",
+    "z": "78ffba98.f127d4",
+    "name": "",
+    "func": "var require = context.global.get('require'); \n\nreturn msg;",
+    "outputs": 1,
+    "timeout": 10000,
+    "newThread": false,
+    "noerr": 0,
+    "x": 467.5,
+    "y": 340.796875,
+    "wires": [
+        []
+    ]
+  }
 ]

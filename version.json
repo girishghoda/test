@@ -9,11 +9,14 @@
       "versionNumber": 1,
       "displayText": "Authentication Deploy",
       "directoryName": "1.0.0",
-      "timeStamp": "2022-03-07T09:24:03.071Z",
-      "username": "UNDEFINED",
+      "timeStamp": "2022-02-25T10:23:04.028Z",
+      "username": "utsav.shah@ajmerainfotech.com",
       "previousCurrentVersion": null,
       "listOfNodes": [
-        "node-red/create-order"
+        "node-red/express",
+        "node-red/debug",
+        "node-red/httpin",
+        "node-red/function"
       ]
     }
   ]
