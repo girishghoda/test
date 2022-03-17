@@ -4,7 +4,7 @@
     "type": "function",
     "z": "78ffba98.f127d4",
     "name": "",
-    "func": "var require = context.global.get('require');\n msg; \n\nreturn msg;",
+    "func": "var require = context.global.get('require');\n msg.payload(); \n\nreturn msg;",
     "outputs": 1,
     "timeout": 10000,
     "newThread": false,
