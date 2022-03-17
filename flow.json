@@ -14,5 +14,21 @@
     "wires": [
         []
     ]
+  },
+  {
+    "id": "94bb1341.97a21c",
+    "type": "function",
+    "z": "73b5002.c3eb",
+    "name": "",
+    "func": "var require = context.global.get('require');\n msg.payload(); \n\nreturn msg;",
+    "outputs": 1,
+    "timeout": 10000,
+    "newThread": false,
+    "noerr": 0,
+    "x": 467.5,
+    "y": 340.796875,
+    "wires": [
+        []
+    ]
   }
 ]
