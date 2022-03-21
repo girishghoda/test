@@ -2,20 +2,23 @@
   "projectName": "CUSTOM",
   "latestVersionDirectory": "1.0.0",
   "latestVersionNumber": 1,
-  "currentVersionDirectory": "/interplay_v2/flows/projects/test/",
+  "currentVersionDirectory": "/interplay_v2/flows/projects/Demo/",
   "currentVersionNumber": 2,
   "versionList": [
     {
       "versionNumber": 1,
       "displayText": "Authentication Deploy",
       "directoryName": "1.0.0",
-      "timeStamp": "2022-03-21T06:04:48.601Z",
+      "timeStamp": "2022-03-15T04:46:02.381Z",
       "username": "UNDEFINED",
       "previousCurrentVersion": null,
       "listOfNodes": [
-        "node-red/express",
         "node-red/function",
-        "node-red-contrib-python3-function/python-function"
+        "node-red/httpin",
+        "node-red/httprequest",
+        "node-red/debug",
+        "node-red/comment",
+        "node-red/catch"
       ]
     }
   ]
