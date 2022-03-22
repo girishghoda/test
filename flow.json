@@ -23,75 +23,935 @@
         "timeout": 10000,
         "newThread": false,
         "noerr": 0,
-        "x": 430,
-        "y": 320,
+        "x": 818.3333206176758,
+        "y": 359.6666831970215,
         "wires": [
             [
-                "94bb1341.97a21c"
+                "8185df0a.6c3f3"
             ]
         ]
     },
     {
-        "id": "94bb1341.97a21c",
+        "id": "6150fd13.1d7f14",
         "type": "function",
-        "z": "ccf8b173.24fa4",
-        "name": "",
-        "func": "var require = context.global.get('require');\n msg.payload(); \n\nreturn msg;",
+        "z": "3afa62f4.b988ee",
+        "name": "Fetch User from DB",
+        "func": "var require = context.global.get('require');\nvar payload = msg.req.body;\nmsg.topic = \"SELECT * FROM User where username='\" +  payload.username + \"'AND password='\" + payload.password + \"';\";\nmsg.deviceToken = payload.deviceToken;\nreturn msg;",
         "outputs": 1,
         "timeout": 10000,
         "newThread": false,
         "noerr": 0,
-        "x": 667.5,
-        "y": 340.796875,
+        "x": 372.3333206176758,
+        "y": 187.66668319702148,
         "wires": [
-            []
+            [
+                "b73ddb83.ea7ff8"
+            ]
         ]
     },
     {
-        "id": "c9b10169.0cf0a",
+        "id": "778f677c.254e58",
         "type": "function",
-        "z": "c521d158.3d1b",
+        "z": "3afa62f4.b988ee",
         "name": "",
-        "func": "var require = context.global.get('require'); \n\nreturn msg;",
+        "func": "var require = context.global.get('require');\nif (msg.payload.length > 0) {\n    delete msg.payload[0][\"password\"];\n    msg.loginUser = msg.payload[0];\n    if (msg.deviceToken) {\n        msg.topic = \"UPDATE User SET deviceid='\" + msg.deviceToken + \"'\";\n        msg.loginUser.deviceid = msg.deviceToken;\n    }\n} else {\n    msg.loginUser = { 'code': '401', 'messge': 'User unauthorized' };\n}\nreturn msg;",
         "outputs": 1,
         "timeout": 10000,
         "newThread": false,
         "noerr": 0,
-        "x": 554.4965515136719,
-        "y": 371.8229331970215,
+        "x": 812.3333206176758,
+        "y": 187.66668319702148,
         "wires": [
             [
-                "323cf188.46879e"
+                "2b17b8e7.d9de08"
             ]
         ]
     },
     {
-        "id": "3831ea6a.0a4656",
-        "type": "express",
-        "z": "c521d158.3d1b",
-        "name": "",
-        "func": "var require = context.global.get('require');\nvar app=msg.app;\n \n\nreturn msg;",
+        "id": "e1f5fdee.72e3e",
+        "type": "function",
+        "z": "3afa62f4.b988ee",
+        "name": "Save Ticket to DB",
+        "func": "var require = context.global.get('require');\nvar payload = msg.req.body;\nvar date = new Date().toISOString().split(\"T\");\nvar dateTime = date[0] + \" \" +date[1].replaceAll('Z', '');\nmsg.topic = \"INSERT INTO Ticket (title, details, customerlocation, customeraddress, status, assignto, createdby, createdtime, resolvedtime) VALUES ('\" + payload.title + \"','\"  + payload.detail + \"','\"  + payload.customerlocation + \"','\" + payload.customeraddress + \"','\" + payload.status + \"',\" + payload.assignto + \",\" + payload.createdby +  \",'\" + dateTime +  \"','\" + dateTime + \"');\";\nreturn msg;",
         "outputs": 1,
+        "timeout": 10000,
+        "newThread": false,
         "noerr": 0,
-        "x": 494.4965515136719,
-        "y": 158.81945419311523,
+        "x": 376.3333206176758,
+        "y": 730.6666831970215,
         "wires": [
             [
-                "c9b10169.0cf0a"
+                "94265bc.51bb8a8"
             ]
         ]
     },
     {
-        "id": "323cf188.46879e",
-        "type": "python3-function",
-        "z": "c521d158.3d1b",
+        "id": "926bc808.8fc768",
+        "type": "function",
+        "z": "3afa62f4.b988ee",
         "name": "",
-        "func": "\nreturn msg",
+        "func": "var require = context.global.get('require');\nvar payload = msg.req.body;\nmsg.ticektId = msg.payload.insertId;\nmsg.topic = \"select deviceid from User where id=\" + payload.assignto;\nreturn msg;",
         "outputs": 1,
-        "x": 753.5069274902344,
-        "y": 237.82986068725586,
+        "timeout": 10000,
+        "newThread": false,
+        "noerr": 0,
+        "x": 824.8333206176758,
+        "y": 729.8698081970215,
         "wires": [
-            []
+            [
+                "a4b131a5.ef547"
+            ]
+        ]
+    },
+    {
+        "id": "fb094a95.7364c8",
+        "type": "function",
+        "z": "3afa62f4.b988ee",
+        "name": "Fetch Created tickets from DB for USER",
+        "func": "var require = context.global.get('require');\nmsg.topic = \"select at.name as 'assignedTo', t.id, t.title, t.details, t.customerlocation, t.customeraddress, t.status, t.assignto, t.createdby, t.createdtime, t.resolvedtime from Ticket t INNER join User at on at.id = t.assignto where createdby = \" + msg.req.params.id + \";\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 10000,
+        "newThread": false,
+        "noerr": 0,
+        "x": 567.3333206176758,
+        "y": 1273.6666831970215,
+        "wires": [
+            [
+                "c6b30cf1.d328d"
+            ]
+        ]
+    },
+    {
+        "id": "e131ce33.541dd",
+        "type": "function",
+        "z": "3afa62f4.b988ee",
+        "name": "Fetch assigned tickets from DB",
+        "func": "var require = context.global.get('require');\nmsg.topic = \"select at.name as 'createdBy', t.id, t.title, t.details, t.customerlocation, t.customeraddress, t.status, t.assignto, t.createdby, t.createdtime, t.resolvedtime from Ticket t INNER join User at on at.id = t.createdby where assignto = \" + msg.req.params.id + \";\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 10000,
+        "newThread": false,
+        "noerr": 0,
+        "x": 532.3333206176758,
+        "y": 1454.6666831970215,
+        "wires": [
+            [
+                "bb229ce9.ec023"
+            ]
+        ]
+    },
+    {
+        "id": "1d5ec00f.af345",
+        "type": "function",
+        "z": "3afa62f4.b988ee",
+        "name": "Fetch Specific Ticket from DB",
+        "func": "var require = context.global.get('require');\nmsg.topic = \"select at.name as 'assignedTo', cb.name as 'createdBy', t.id, t.title, t.details, t.customerlocation, t.customeraddress, t.status, t.assignto, t.createdby, t.createdtime, t.resolvedtime from Ticket t INNER join User at on at.id = t.assignto INNER join User cb on cb.id = t.createdby where t.id = \" + msg.req.params.id + \";\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 10000,
+        "newThread": false,
+        "noerr": 0,
+        "x": 422.3333206176758,
+        "y": 1095.6666831970215,
+        "wires": [
+            [
+                "c7793d76.09add"
+            ]
+        ]
+    },
+    {
+        "id": "7422c511.27476c",
+        "type": "function",
+        "z": "3afa62f4.b988ee",
+        "name": "Update Ticket to DB",
+        "func": "var require = context.global.get('require');\nvar payload = msg.req.body;\nvar date = new Date().toISOString().split(\"T\");\nvar dateTime = date[0] + \" \" +date[1].replaceAll('Z', '');\nmsg.topic = \"UPDATE Ticket SET status='\" + payload.status + \"',\" + \"resolvedtime='\" + dateTime + \"' WHERE id=\" + msg.req.params.id + \";\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 10000,
+        "newThread": false,
+        "noerr": 0,
+        "x": 394.3333206176758,
+        "y": 925.6666831970215,
+        "wires": [
+            [
+                "971b19d6.e9f188"
+            ]
+        ]
+    },
+    {
+        "id": "6adbae0.9c69054",
+        "type": "function",
+        "z": "3afa62f4.b988ee",
+        "name": "",
+        "func": "var require = context.global.get('require');\nmsg.payload = \"success\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 10000,
+        "newThread": false,
+        "noerr": 0,
+        "x": 823.8333206176758,
+        "y": 924.8698081970215,
+        "wires": [
+            [
+                "da193332.3dee4"
+            ]
+        ]
+    },
+    {
+        "id": "82536de2.36036",
+        "type": "function",
+        "z": "3afa62f4.b988ee",
+        "name": "Save Ticket Meta Data to DB",
+        "func": "var require = context.global.get('require');\nvar payload = msg.payload;\nvar date = new Date().toISOString().split(\"T\");\nvar dateTime = date[0] + \" \" +date[1].replaceAll('Z', '');\nnode.warn(payload);\nmsg.topic = \"INSERT INTO TicketMetadata (ticketid, title, createdby, location, updatedtime, info) VALUES (\" + payload.ticketid + \",'\" + payload.title + \"',\" + payload.createdby + \",'\" + payload.location + \"','\" + dateTime + \"',\" + JSON.stringify(payload.info) +\");\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 10000,
+        "newThread": false,
+        "noerr": 0,
+        "x": 521.3333206176758,
+        "y": 1837.6666831970215,
+        "wires": [
+            [
+                "8a5fd7b4.f15628"
+            ]
+        ]
+    },
+    {
+        "id": "d79480a6.fc97",
+        "type": "function",
+        "z": "3afa62f4.b988ee",
+        "name": "",
+        "func": "var require = context.global.get('require');\nmsg.payload = \"success\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 10000,
+        "newThread": false,
+        "noerr": 0,
+        "x": 960.8333206176758,
+        "y": 1837.8698081970215,
+        "wires": [
+            [
+                "d9f12e9c.4f104"
+            ]
+        ]
+    },
+    {
+        "id": "ed81cd70.9e93f",
+        "type": "function",
+        "z": "3afa62f4.b988ee",
+        "name": "Fetch Ticket metadata from DB",
+        "func": "var require = context.global.get('require');\nmsg.topic = \"select at.name as 'createdBy', tm.id, tm.title, tm.info, tm.ticketid, tm.location, tm.updatedtime from TicketMetadata tm INNER join User at on at.id = tm.createdby where tm.ticketid=\" + msg.req.params.id;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 10000,
+        "newThread": false,
+        "noerr": 0,
+        "x": 531.3333206176758,
+        "y": 1647.6666831970215,
+        "wires": [
+            [
+                "fc24dfc2.c4196"
+            ]
+        ]
+    },
+    {
+        "id": "ffa98f8b.7a154",
+        "type": "function",
+        "z": "3afa62f4.b988ee",
+        "name": "set fcm payload and header",
+        "func": "var require = context.global.get('require');\nconst deviceid = msg.payload[0].deviceid;\nmsg.payload = { \"to\": deviceid, \"notification\": { \"title\": \"New ticket created\", \"body\": \"\"}};\nmsg.headers = { \"Authorization\": \"key=AAAAFqi3d1k:APA91bFu0OkDfdeSzgYYoG5suGQoj331gKnFtRAQniIGgHAEXyzitn3N8HIWGE8_FRSaV-bnF8Bj8Lrk9goM0RSLFfiFvYHro5x7VtbvL7z86cVQxinAT8IwRcmcl-x0Mhqj1sqgLyss\"};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 10000,
+        "newThread": false,
+        "noerr": 0,
+        "x": 1332.3333206176758,
+        "y": 729.6666831970215,
+        "wires": [
+            [
+                "c806f0a5.5b72b"
+            ]
+        ]
+    },
+    {
+        "id": "c3415ba3.0edf88",
+        "type": "function",
+        "z": "3afa62f4.b988ee",
+        "name": "",
+        "func": "var require = context.global.get('require');\nmsg.payload=\"success\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 10000,
+        "newThread": false,
+        "noerr": 0,
+        "x": 2034.3333206176758,
+        "y": 729.6666831970215,
+        "wires": [
+            [
+                "c4bdc84d.b577f8"
+            ]
+        ]
+    },
+    {
+        "id": "9c95b541.5e6898",
+        "type": "function",
+        "z": "3afa62f4.b988ee",
+        "name": "",
+        "func": "var require = context.global.get('require');\nmsg.payload = msg.loginUser;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 10000,
+        "newThread": false,
+        "noerr": 0,
+        "x": 1226.3333206176758,
+        "y": 187.66668319702148,
+        "wires": [
+            [
+                "63857cba.487614"
+            ]
+        ]
+    },
+    {
+        "id": "de4f5303.58d5",
+        "type": "function",
+        "z": "3afa62f4.b988ee",
+        "name": "Fetch Users from DB",
+        "func": "var require = context.global.get('require');\nvar payload = msg.req.body;\nmsg.topic = \"select * from User\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 10000,
+        "newThread": false,
+        "noerr": 0,
+        "x": 383.3333206176758,
+        "y": 554.6666831970215,
+        "wires": [
+            [
+                "3314a77a.31bf18"
+            ]
+        ]
+    },
+    {
+        "id": "59180638.2c6a48",
+        "type": "http in",
+        "z": "3afa62f4.b988ee",
+        "name": "",
+        "url": "/hvac/user",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 153.83332061767578,
+        "y": 359.4635581970215,
+        "wires": [
+            [
+                "437e70b7.b747d"
+            ]
+        ]
+    },
+    {
+        "id": "e1de713.87c549",
+        "type": "http in",
+        "z": "3afa62f4.b988ee",
+        "name": "",
+        "url": "/hvac/login",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 151.33332061767578,
+        "y": 187.66668319702148,
+        "wires": [
+            [
+                "6150fd13.1d7f14"
+            ]
+        ]
+    },
+    {
+        "id": "a0f5eff0.3f54a",
+        "type": "http in",
+        "z": "3afa62f4.b988ee",
+        "name": "",
+        "url": "/hvac/ticket",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 164.33332061767578,
+        "y": 730.6666831970215,
+        "wires": [
+            [
+                "e1f5fdee.72e3e"
+            ]
+        ]
+    },
+    {
+        "id": "c4799ed5.5f094",
+        "type": "http in",
+        "z": "3afa62f4.b988ee",
+        "name": "",
+        "url": "/hvac/ticket/createdby/:id",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 210.33332061767578,
+        "y": 1273.6666831970215,
+        "wires": [
+            [
+                "fb094a95.7364c8"
+            ]
+        ]
+    },
+    {
+        "id": "8f4a07d7.fd3f28",
+        "type": "http in",
+        "z": "3afa62f4.b988ee",
+        "name": "",
+        "url": "/hvac/ticket/assign/:id",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 203.33332061767578,
+        "y": 1454.6666831970215,
+        "wires": [
+            [
+                "e131ce33.541dd"
+            ]
+        ]
+    },
+    {
+        "id": "897a5785.0a5c18",
+        "type": "http in",
+        "z": "3afa62f4.b988ee",
+        "name": "",
+        "url": "/hvac/ticket/:id",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 169.33332061767578,
+        "y": 1095.6666831970215,
+        "wires": [
+            [
+                "1d5ec00f.af345"
+            ]
+        ]
+    },
+    {
+        "id": "34e2ec66.709b24",
+        "type": "http in",
+        "z": "3afa62f4.b988ee",
+        "name": "",
+        "url": "/hvac/ticket/:id",
+        "method": "put",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 169.33332061767578,
+        "y": 925.6666831970215,
+        "wires": [
+            [
+                "7422c511.27476c"
+            ]
+        ]
+    },
+    {
+        "id": "fc122483.197118",
+        "type": "http in",
+        "z": "3afa62f4.b988ee",
+        "name": "",
+        "url": "/hvac/ticket/metadata",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 202.33332061767578,
+        "y": 1837.6666831970215,
+        "wires": [
+            [
+                "82536de2.36036"
+            ]
+        ]
+    },
+    {
+        "id": "bba67ee6.f1fe",
+        "type": "http in",
+        "z": "3afa62f4.b988ee",
+        "name": "",
+        "url": "/hvac/ticket/:id/metadata",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 212.33332061767578,
+        "y": 1647.6666831970215,
+        "wires": [
+            [
+                "ed81cd70.9e93f"
+            ]
+        ]
+    },
+    {
+        "id": "bed541f3.039b8",
+        "type": "http in",
+        "z": "3afa62f4.b988ee",
+        "name": "",
+        "url": "/hvac/users",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 154.33332061767578,
+        "y": 554.6666831970215,
+        "wires": [
+            [
+                "de4f5303.58d5"
+            ]
+        ]
+    },
+    {
+        "id": "8185df0a.6c3f3",
+        "type": "http response",
+        "z": "3afa62f4.b988ee",
+        "name": "HTTP Response",
+        "statusCode": "",
+        "headers": {},
+        "x": 1136.8333206176758,
+        "y": 359.4635581970215,
+        "wires": []
+    },
+    {
+        "id": "63857cba.487614",
+        "type": "http response",
+        "z": "3afa62f4.b988ee",
+        "name": "HTTP Response",
+        "statusCode": "",
+        "headers": {},
+        "x": 1483.3333206176758,
+        "y": 187.66668319702148,
+        "wires": []
+    },
+    {
+        "id": "c4bdc84d.b577f8",
+        "type": "http response",
+        "z": "3afa62f4.b988ee",
+        "name": "HTTP Response",
+        "statusCode": "",
+        "headers": {},
+        "x": 2283.333320617676,
+        "y": 729.6666831970215,
+        "wires": []
+    },
+    {
+        "id": "29032f1d.4e8d5",
+        "type": "http response",
+        "z": "3afa62f4.b988ee",
+        "name": "HTTP Response",
+        "statusCode": "",
+        "headers": {},
+        "x": 1069.0833930969238,
+        "y": 1273.6666450500488,
+        "wires": []
+    },
+    {
+        "id": "ee9c7c7.9fc2b8",
+        "type": "http response",
+        "z": "3afa62f4.b988ee",
+        "name": "HTTP Response",
+        "statusCode": "",
+        "headers": {},
+        "x": 1039.0833282470703,
+        "y": 1454.6666469573975,
+        "wires": []
+    },
+    {
+        "id": "4dfcd6d4.de5f18",
+        "type": "http response",
+        "z": "3afa62f4.b988ee",
+        "name": "HTTP Response",
+        "statusCode": "",
+        "headers": {},
+        "x": 863.3333206176758,
+        "y": 1094.6666831970215,
+        "wires": []
+    },
+    {
+        "id": "da193332.3dee4",
+        "type": "http response",
+        "z": "3afa62f4.b988ee",
+        "name": "HTTP Response",
+        "statusCode": "",
+        "headers": {},
+        "x": 1100.3333206176758,
+        "y": 924.6666831970215,
+        "wires": []
+    },
+    {
+        "id": "d9f12e9c.4f104",
+        "type": "http response",
+        "z": "3afa62f4.b988ee",
+        "name": "HTTP Response",
+        "statusCode": "",
+        "headers": {},
+        "x": 1240.3333206176758,
+        "y": 1837.6666831970215,
+        "wires": []
+    },
+    {
+        "id": "d7fca1a8.517ee",
+        "type": "http response",
+        "z": "3afa62f4.b988ee",
+        "name": "HTTP Response",
+        "statusCode": "",
+        "headers": {},
+        "x": 1022.3333282470703,
+        "y": 1642.9166507720947,
+        "wires": []
+    },
+    {
+        "id": "4d6ba087.7ee56",
+        "type": "http response",
+        "z": "3afa62f4.b988ee",
+        "name": "HTTP Response",
+        "statusCode": "",
+        "headers": {},
+        "x": 831.3333206176758,
+        "y": 554.6666831970215,
+        "wires": []
+    },
+    {
+        "id": "c806f0a5.5b72b",
+        "type": "http request",
+        "z": "3afa62f4.b988ee",
+        "name": "http POST to Google FCM",
+        "method": "POST",
+        "ret": "txt",
+        "url": "https://fcm.googleapis.com/fcm/send",
+        "tls": "",
+        "x": 1714.8333206176758,
+        "y": 729.4635581970215,
+        "wires": [
+            [
+                "c3415ba3.0edf88"
+            ]
+        ]
+    },
+    {
+        "id": "1912f139.e6b43f",
+        "type": "console",
+        "z": "3afa62f4.b988ee",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "x": 338.75,
+        "y": 2023.75,
+        "wires": []
+    },
+    {
+        "id": "d98dec11.597c1",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "HTTP In node has a binindg URL  /login ",
+        "info": "",
+        "x": 215.33332061767578,
+        "y": 138.66668319702148,
+        "wires": []
+    },
+    {
+        "id": "e424f249.92f94",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "SELECT Query: Fetch user from DB",
+        "info": "",
+        "x": 421.33331298828125,
+        "y": 248.16669082641602,
+        "wires": []
+    },
+    {
+        "id": "f68a7996.5067c8",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "Process fetched user and pass update user query to DB",
+        "info": "",
+        "x": 940.3333129882812,
+        "y": 244.41669082641602,
+        "wires": []
+    },
+    {
+        "id": "761016ca.0718d8",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "Set fetched user payload",
+        "info": "",
+        "x": 1255.3333206176758,
+        "y": 141.66668319702148,
+        "wires": []
+    },
+    {
+        "id": "31408364.84184c",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "HTTP In node has a binindg URL  /user ",
+        "info": "",
+        "x": 223.33332061767578,
+        "y": 309.6666831970215,
+        "wires": []
+    },
+    {
+        "id": "a6399dc3.2c1df",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "INSERT Query: save user to DB",
+        "info": "",
+        "x": 405.3333206176758,
+        "y": 408.6666831970215,
+        "wires": []
+    },
+    {
+        "id": "890dec3d.60642",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "Set success message to payload",
+        "info": "",
+        "x": 869.3333206176758,
+        "y": 313.6666831970215,
+        "wires": []
+    },
+    {
+        "id": "64ed1898.4e1088",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "HTTP In node has a binindg URL  /user ",
+        "info": "",
+        "x": 220.33332061767578,
+        "y": 506.6666831970215,
+        "wires": []
+    },
+    {
+        "id": "ed1ff602.11c888",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "SELECT Query: Fetch users from DB",
+        "info": "",
+        "x": 434.3333206176758,
+        "y": 605.6666831970215,
+        "wires": []
+    },
+    {
+        "id": "1090b12.f63974f",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "HTTP In node has a binindg URL  /ticket ",
+        "info": "",
+        "x": 223.33332061767578,
+        "y": 683.6666831970215,
+        "wires": []
+    },
+    {
+        "id": "327939bd.acec06",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "INSERT Query: Save ticket to DB",
+        "info": "",
+        "x": 427.3333206176758,
+        "y": 781.6666831970215,
+        "wires": []
+    },
+    {
+        "id": "e12cd9a4.d8b898",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "SELECT Query: Fetch user deviceId from DB",
+        "info": "",
+        "x": 908.3333206176758,
+        "y": 680.6666831970215,
+        "wires": []
+    },
+    {
+        "id": "dc21701f.0dd1b",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "Set FCM payload and authorization header",
+        "info": "",
+        "x": 1384.3333206176758,
+        "y": 778.6666831970215,
+        "wires": []
+    },
+    {
+        "id": "5dd650c2.59f94",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "Handle FCM http request: POST",
+        "info": "",
+        "x": 1729.3333206176758,
+        "y": 681.6666831970215,
+        "wires": []
+    },
+    {
+        "id": "c84db893.ad6388",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "Set success message to payload",
+        "info": "",
+        "x": 2090.333320617676,
+        "y": 676.6666831970215,
+        "wires": []
+    },
+    {
+        "id": "5f490196.45fd7",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "HTTP In node has a binindg URL  /ticket/:id ",
+        "info": "",
+        "x": 234.33332061767578,
+        "y": 874.6666831970215,
+        "wires": []
+    },
+    {
+        "id": "64b90de8.1745d4",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "UPDATE Query: Update ticket to DB",
+        "info": "",
+        "x": 443.3333206176758,
+        "y": 972.6666831970215,
+        "wires": []
+    },
+    {
+        "id": "752f489e.4982c8",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "Set success message to payload",
+        "info": "",
+        "x": 877.3333206176758,
+        "y": 876.6666831970215,
+        "wires": []
+    },
+    {
+        "id": "e633e9ef.651498",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "HTTP In node has a binindg URL  /ticket/:id ",
+        "info": "",
+        "x": 239.33332061767578,
+        "y": 1048.6666831970215,
+        "wires": []
+    },
+    {
+        "id": "681059f6.b15208",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "SELECT Query: Fetch specific ticket from DB",
+        "info": "",
+        "x": 472.33331298828125,
+        "y": 1148.9166431427002,
+        "wires": []
+    },
+    {
+        "id": "75d9adf8.7edc14",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "HTTP In node has a binindg URL  /ticket/createdby/:id",
+        "info": "",
+        "x": 280.3333206176758,
+        "y": 1225.6666831970215,
+        "wires": []
+    },
+    {
+        "id": "597b5a8a.0bc584",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "SELECT Query: Fetch created by tickets from DB",
+        "info": "",
+        "x": 587.3333206176758,
+        "y": 1322.6666831970215,
+        "wires": []
+    },
+    {
+        "id": "6531fe93.c10d5",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "HTTP In node has a binindg URL  /ticket/assign/:id",
+        "info": "",
+        "x": 268.3333206176758,
+        "y": 1401.6666831970215,
+        "wires": []
+    },
+    {
+        "id": "e1deb3bb.46348",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "SELECT Query: Fetch assign by tickets from DB",
+        "info": "",
+        "x": 577.8333282470703,
+        "y": 1510.166648864746,
+        "wires": []
+    },
+    {
+        "id": "e89516d9.0b9e58",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "HTTP In node has a binindg URL  /ticket/:id/metadata",
+        "info": "",
+        "x": 281.3333206176758,
+        "y": 1597.6666831970215,
+        "wires": []
+    },
+    {
+        "id": "edb6c10.12c074",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "SELECT Query: Fetch ticekt's metadatas from DB",
+        "info": "",
+        "x": 580.3333282470703,
+        "y": 1704.4166507720947,
+        "wires": []
+    },
+    {
+        "id": "95ff8ce7.cd0a9",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "HTTP In node has a binindg URL  /ticket/metadata",
+        "info": "",
+        "x": 271.3333206176758,
+        "y": 1791.6666831970215,
+        "wires": []
+    },
+    {
+        "id": "641a83ff.1842bc",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "INSERT Query: Save ticekt's metadatas to DB",
+        "info": "",
+        "x": 570.3333129882812,
+        "y": 1895.416654586792,
+        "wires": []
+    },
+    {
+        "id": "b99bf091.4372d",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "Set success message to payload",
+        "info": "",
+        "x": 1018.3333206176758,
+        "y": 1791.6666831970215,
+        "wires": []
+    },
+    {
+        "id": "f833ea4b.6dbba8",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "For changing notification text: Change \"notification\" > \"title\" in msg.payload",
+        "info": "",
+        "x": 1494.3333206176758,
+        "y": 824.6666831970215,
+        "wires": []
+    },
+    {
+        "id": "8e913e1.06391c",
+        "type": "comment",
+        "z": "3afa62f4.b988ee",
+        "name": "All the APIs needed to handle the mobile app is here",
+        "info": "",
+        "x": 326.6666564941406,
+        "y": 59.999996185302734,
+        "wires": []
+    },
+    {
+        "id": "fed7b9f5.273608",
+        "type": "catch",
+        "z": "3afa62f4.b988ee",
+        "name": "",
+        "scope": null,
+        "x": 154.12498474121094,
+        "y": 2022.9999866485596,
+        "wires": [
+            [
+                "1912f139.e6b43f"
+            ]
         ]
     }
 ]
