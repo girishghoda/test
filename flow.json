@@ -963,7 +963,7 @@
         "type": "function",
         "z": "c521d158.3d1b",
         "name": "",
-        "func": "var require = context.global.get('require'); \n\nreturn msg;",
+        "func": "var require = context.global.get('require');\nreturn msg;",
         "outputs": 1,
         "timeout": 10000,
         "newThread": false,
