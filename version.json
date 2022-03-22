@@ -1,9 +1,9 @@
 {
   "projectName": "CUSTOM",
-  "latestVersionDirectory": "1.0.1",
-  "latestVersionNumber": 2,
+  "latestVersionDirectory": "1.0.2",
+  "latestVersionNumber": 3,
   "currentVersionDirectory": "/interplay_v2/flows/projects/Demo/",
-  "currentVersionNumber": 3,
+  "currentVersionNumber": 4,
   "versionList": [
     {
       "versionNumber": 1,
@@ -28,6 +28,19 @@
       "previousCurrentVersion": 2,
       "listOfNodes": [
         "node-red/function"
+      ]
+    },
+    {
+      "versionNumber": 3,
+      "displayText": "Authentication Deploy",
+      "directoryName": "1.0.2",
+      "timeStamp": "2022-03-22T06:09:10.306Z",
+      "username": "utsav.shah@ajmerainfotech.com",
+      "previousCurrentVersion": 3,
+      "listOfNodes": [
+        "node-red/express",
+        "node-red/function",
+        "node-red-contrib-python3-function/python-function"
       ]
     }
   ]
