@@ -201,7 +201,7 @@
         "dataset_name": "Retail_Product",
         "imageUrl": "",
         "uidUrl": "",
-        "x": 720,
+        "x": 725,
         "y": 200,
         "wires": []
     },
@@ -419,7 +419,7 @@
         "epochs": "2",
         "func": "\nreturn msg",
         "outputs": 1,
-        "x": 380,
+        "x": 385,
         "y": 400,
         "wires": [
             [
@@ -806,7 +806,7 @@
         "method": "get",
         "upload": false,
         "swaggerDoc": "",
-        "x": 180,
+        "x": 185,
         "y": 100,
         "wires": [
             [
@@ -855,7 +855,7 @@
         "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 640,
+        "x": 645,
         "y": 100,
         "wires": []
     },
@@ -1455,7 +1455,7 @@
         "console": false,
         "tostatus": false,
         "complete": "false",
-        "x": 710,
+        "x": 715,
         "y": 160,
         "wires": []
     },
@@ -1469,7 +1469,7 @@
         "console": false,
         "tostatus": false,
         "complete": "true",
-        "x": 840,
+        "x": 845,
         "y": 380,
         "wires": []
     },
