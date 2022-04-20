@@ -98,6 +98,13 @@
         "info": ""
     },
     {
+        "id": "84b7f01c.0d9dc",
+        "type": "websocket-listener",
+        "z": "37aa7279.773fce",
+        "path": "/ws/mobiui",
+        "wholemsg": "false"
+    },
+    {
         "id": "ea85465e.7ef1f8",
         "type": "MySQLdatabase",
         "z": "37aa7279.773fce",
@@ -105,13 +112,6 @@
         "port": "3306",
         "db": "testdb",
         "tz": ""
-    },
-    {
-        "id": "84b7f01c.0d9dc",
-        "type": "websocket-listener",
-        "z": "37aa7279.773fce",
-        "path": "/ws/mobiui",
-        "wholemsg": "false"
     },
     {
         "id": "f9d5ed3d.3222b",
@@ -2229,8 +2229,8 @@
         "timeout": 10000,
         "newThread": false,
         "noerr": 0,
-        "x": 424.5,
-        "y": 332.796875,
+        "x": 468.5,
+        "y": 340.796875,
         "wires": [
             []
         ]
@@ -35239,7 +35239,7 @@
         "type": "function",
         "z": "eb792f65.b37f6",
         "name": "",
-        "func": "var require = context.global.get('require'); \n\nmsg.topic = msg.payload;\nmsg.topic = msg.payload;\n\nreturn msg\n",
+        "func": "var require = context.global.get('require'); \n\nmsg.topic = msg.payload;\nmsg.topic = msg.payload;\n\nreturn msg",
         "outputs": 1,
         "timeout": "",
         "newThread": false,
